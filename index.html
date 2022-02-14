@@ -12,8 +12,7 @@
   <div id="radar">
   <svg height="630" width="630" id="svgRadar">
     <g>
-    <circle id="circ6" cx="300" cy="300" r="300" stroke="#fff" stroke-width="1" fill="#000" />
-    <circle id="circ5" cx="300" cy="300" r="250" stroke="#fff" stroke-width="1" fill="#000" />
+	    
     <circle id="circ4" cx="300" cy="300" r="200" stroke="#fff" stroke-width="1" fill="#000" />
     <circle id="circ3" cx="300" cy="300" r="150" stroke="#fff" stroke-width="1" fill="#000" />
     <circle id="circ2" cx="300" cy="300" r="100" stroke="#fff" stroke-width="1" fill="#000" />
@@ -27,12 +26,10 @@
     </g>
 
     <g font-size="10" font-family="sans-serif" text-anchor="middle">
-      <text x="330" y="15" dx="-30" fill="#ff0000">PLAN FOR REMOVAL</text>
-      <text x="330" y="60" dx="-30" fill="#fa8000">NO NEW USE</text>
-      <text x="330" y="110" dx="-30" fill="#ffc000">EVALUATE</text>
-      <text x="330" y="160" dx="-30" fill="#ffff00">TRIAL</text>
-      <text x="330" y="210" dx="-30" fill="#0fff00">ADOPT</text>
-      <text x="330" y="260" dx="-30" fill="#008f00">HOLD</text>
+      <text x="330" y="110" dx="-30" fill="#ffc000">Hold</text>
+      <text x="330" y="160" dx="-30" fill="#ffff00">Assess</text>
+      <text x="330" y="210" dx="-30" fill="#0fff00">Trial</text>
+      <text x="330" y="260" dx="-30" fill="#008f00">Adopt</text>
     </g>
 
     <g font-size="12" font-family="sans-serif" text-anchor="middle">
@@ -136,12 +133,10 @@ Technology that is nearing End of Life (EoL) or is soon to be deprecated. AppSec
 for(i = 0; i < len; i++){
 	dot = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
 
-	if(techList[i].HOLD == "y")			{createDots("lime green", "#008f00", 10, 44);}
-	if(techList[i].ADOPT == "y")			{createDots("yellow green", "#0fff00", 56, 94);}
-	if(techList[i].TRIAL == "y")			{createDots("lemon yellow", "#ffff00", 106, 144);}
-	if(techList[i].EVALUATE == "y")		{createDots("cadmium yellow", "#ffc000", 156, 194);}
-	if(techList[i].NO_NEW_USE == "y")		{createDots("orange", "#fa8000", 206, 244);}
-	if(techList[i].PLAN_FOR_REMOVAL == "y")	{createDots("red", "#dd0000", 256, 294);}
+	if(techList[i].Hold == "y")			{createDots("lime green", "#008f00", 10, 44);}
+	if(techList[i].Adopt == "y")			{createDots("yellow green", "#0fff00", 56, 94);}
+	if(techList[i].Trial == "y")			{createDots("lemon yellow", "#ffff00", 106, 144);}
+	if(techList[i].Assess == "y")		{createDots("cadmium yellow", "#ffc000", 156, 194);}
 	}
 function createDots(color, fill, minR, maxR){
 		var targetDot;
