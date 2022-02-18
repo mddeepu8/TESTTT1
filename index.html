@@ -1,194 +1,93 @@
-<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" type="text/css" href="css/sec_rad.css" />
-<link rel="stylesheet" type="text/css" href="css/legend.css" />
-<link rel="stylesheet" type="text/css" href="css/details_box.css" />
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>Tech Radar</title>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="radar.js"></script>
+<link rel="stylesheet" href="radar.css">
 </head>
-
 <body>
-  <div style="text-align:center">
-  <div id="radar">
-  <svg height="630" width="630" id="svgRadar">
-    <g>
-	    
-    <circle id="circ4" cx="300" cy="300" r="200" stroke="#fff" stroke-width="1" fill="#000" />
-    <circle id="circ3" cx="300" cy="300" r="150" stroke="#fff" stroke-width="1" fill="#000" />
-    <circle id="circ2" cx="300" cy="300" r="100" stroke="#fff" stroke-width="1" fill="#000" />
-    <circle id="circ1" cx="300" cy="300" r="50" stroke="#fff" stroke-width="1" fill="#000" />
-    </g>
-
-    <g stroke="#fff" stroke-width="1">
-     <path stroke-dasharray="10,10" d="M300 0 300 300"  />
-     <path stroke-dasharray="10,10" d="M300 300 30 430"  />
-     <path stroke-dasharray="10,10" d="M300 300 570 430"  />
-    </g>
-
-    <g font-size="10" font-family="sans-serif" text-anchor="middle">
-      <text x="330" y="110" dx="-30" fill="#ffc000">Hold</text>
-      <text x="330" y="160" dx="-30" fill="#ffff00">Assess</text>
-      <text x="330" y="210" dx="-30" fill="#0fff00">Trial</text>
-      <text x="330" y="260" dx="-30" fill="#008f00">Adopt</text>
-    </g>
-
-    <g font-size="12" font-family="sans-serif" text-anchor="middle">
-      <text x="0" y="120" dx="25" fill="#005fff" transform="rotate(-63, 60, 140)">SERVICES</text>
-      <text x="300" y="615" dx="0" fill="#005fff">PLATFORMS</text>
-      <text x="610" y="120" dx="-25" fill="#005fff" transform="rotate(63, 540, 140)">APPLICATIONS</text>
-    </g>
-  </svg>
-  </div>
-<div id="detailsPos"></div>
+<svg id="radar"></svg>
 <script>
-		//FOR TEST - REPLACE WITH IMPORTED CSV & CONFIGURE TO USE WITH CSV
-		//LISTINGS ARE PLACEHOLDERS FOR DEMO PURPOSES & DONT REFLECT THE BRANDS USED
-var techList = [
-		{TECH:"Java", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"y", DATE:"14-6-2015", DETAILS:"Coding - stable, useful"},
-		{TECH:"Ruby", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"y", ADOPT:"", HOLD:"", DATE:"2-7-2016", DETAILS:"Coding - new use"},
-		{TECH:"Swift", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"y", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-8-2014", DETAILS:"Animation software - replacing with CCS3, SVG..., no new builds"},
-		{TECH:"ClickMeeting", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"y", TRIAL:"", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"video conferencing - useful"},
-		{TECH:"Citrix Grasshopper", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"y", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"VoIP - trying out"},
-		{TECH:"GoogleMail", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"y", DATE:"2-7-2016", DETAILS:"use alot"},
-		{TECH:"snow leopard", CAT:"platform", PLAN_FOR_REMOVAL:"y", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-8-2011", DETAILS:"On older machines - phasing out"},
-		{TECH:"VirtualBox", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"y", DATE:"14-6-2012", DETAILS:"VM - still using alot"},
-		{TECH:"WindowsXP", CAT:"platform", PLAN_FOR_REMOVAL:"y", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-7-2002", DETAILS:"OS - older machines - replacing"},
-		{TECH:"El Capitan", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"y", HOLD:"", DATE:"2-8-2017", DETAILS:"OSX - newest in use at moment"},
-		{TECH:"Lua", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"y", TRIAL:"", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"coding - experimenting"},
-		{TECH:"php", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"y", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-7-2016", DETAILS:"coding - replacing with other languages"},
-		{TECH:"asp.net", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"y", DATE:"14-6-2017", DETAILS:"coding - still using alot"},
-		{TECH:"julia", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"y", HOLD:"", DATE:"2-7-2016", DETAILS:"coding - trying out"},
-		{TECH:"haskell", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"y", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-8-2017", DETAILS:"coding - good potential"},
-		{TECH:"Red Hat", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"y", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"Linux OS - trying out"},
-		{TECH:"mountain lion", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"y", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-7-2016", DETAILS:"OSX - still using on some older machines"},
-		{TECH:"BT cloud", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"y", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-8-2017", DETAILS:"cloud storage - trying out"},
-		{TECH:"VLC", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"y", DATE:"14-6-2017", DETAILS:"media player - good for viewing camera footage"},
-		{TECH:"MeshLab", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"y", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"CAD and STL software - trying out"},
-		{TECH:"Google+", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"y", DATE:"2-7-2016", DETAILS:"keep for now"},
-		{TECH:"Python", CAT:"app", PLAN_FOR_REMOVAL:"y", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-8-2017", DETAILS:"Coding - phasing out"},
-		{TECH:"CentOS", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"y", DATE:"14-6-2017", DETAILS:"Linux OS - still using"},
-		{TECH:"Windows95", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"y", DATE:"2-7-2002", DETAILS:"OS - keep for laughs"},
-		{TECH:"Windows13", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"y", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-8-2017", DETAILS:"OS - new - try out.."},
-		{TECH:"flash", CAT:"app", PLAN_FOR_REMOVAL:"y", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"coding - replacing, no longer using"},
-		{TECH:"3Design", CAT:"app", PLAN_FOR_REMOVAL:"y", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-7-2016", DETAILS:"CAD software - no longer using"},
-		{TECH:"Photoshop", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"Y", DATE:"14-6-2017", DETAILS:"image editing - always using"},
-		{TECH:"FileZilla", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"y", DATE:"2-7-2016", DETAILS:"FTP - stable, useful"},
-		{TECH:"ZAP", CAT:"app", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"y", HOLD:"", DATE:"2-8-2017", DETAILS:"Proxy - useful tool"},
-
-		{TECH:"Parallels", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"y", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-8-2017", DETAILS:"VM - trying out"},
-		{TECH:"VMWare", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"y", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"VM - not using as much"},
-		{TECH:"Windows Virtual PC", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"y", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"not using"},
-		{TECH:"Opera", CAT:"service", PLAN_FOR_REMOVAL:"y", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-7-2016", DETAILS:"Browser - hardly use"},
-		{TECH:"Netscape", CAT:"service", PLAN_FOR_REMOVAL:"y", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-8-2017", DETAILS:"Browser - not needed"},
-		{TECH:"iTunes", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"y", TRIAL:"", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"music and apps"},
-		{TECH:"Adobe Acrobat", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"y", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-7-2002", DETAILS:"file reader and editor"},
-		{TECH:"Wacom bamboo", CAT:"service", PLAN_FOR_REMOVAL:"y", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-8-2017", DETAILS:"graphic tablet software - not using much"},
-		{TECH:"lockLizard", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"y", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"14-6-2017", DETAILS:"file reader - haven't used for ages"},
-		{TECH:"Xcode", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"y", EVALUATE:"", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-7-2016", DETAILS:"for iPhone app building - no using"},
-		{TECH:"XAMPP", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"y", HOLD:"", DATE:"14-6-2017", DETAILS:"virtual server - use alot"},
-		{TECH:"awk", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"y", TRIAL:"", ADOPT:"", HOLD:"", DATE:"2-7-2016", DETAILS:"terminal scripting - put in service to make up the dots"},
-		{TECH:"sed", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"y", ADOPT:"", HOLD:"", DATE:"2-8-2017", DETAILS:"terminal scripting - put in platform to make up the dots"},
-		{TECH:"nano", CAT:"service", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"y", ADOPT:"", HOLD:"", DATE:"2-7-2016", DETAILS:"terminal file editor - easy to use"},
-		{TECH:"emacs", CAT:"platform", PLAN_FOR_REMOVAL:"", NO_NEW_USE:"", EVALUATE:"", TRIAL:"", ADOPT:"y", HOLD:"", DATE:"2-8-2017", DETAILS:"terminal file editor - favourite editor"}
-	];
+radar_visualization({
+  svg_id: "radar",
+  width: 1450,
+  height: 1000,
+  colors: {
+    background: "#fff",
+    grid: "#bbb",
+    inactive: "#ddd"
+  },
+  title: "Technology Radar",
+  quadrants: [
+    { name: "Languages&Frameworks" },
+    { name: "Platforms" },
+    { name: "Techniques" },
+    { name: "Tools" }
+  ],
+  rings: [
+    { name: "ADOPT",  color: "#93c47d" },
+    { name: "TRIAL", color: "#b7e1cd" },
+    { name: "ASSESS",  color: "#fce8b2" },
+    { name: "HOLD",  color: "#f4c7c3" }
+  ],
+  print_layout: true,
+  entries: [
+{ label: "Delphi", quadrant: 0, ring: 2, moved: 0 },
+{ label: "SwiftUI Combine", quadrant: 0, ring: 3, moved: 0 },
+{ label: "Monix (Scala)", quadrant: 0, ring: 3, moved: 0 },
+{ label: "Scalaz", quadrant: 0, ring: 3, moved: 0 },
+{ label: "Scala", quadrant: 0, ring: 3, moved: 0 },
+{ label: "Python", quadrant: 0, ring: 3, moved: 0 },
+{ label: "Swift on server", quadrant: 0, ring: 2, moved: 0 },
+{ label: "Go", quadrant: 0, ring: 2, moved: 0 },
+{ label: "Akka", quadrant: 0, ring: 2, moved: 0 },
+{ label: "Haxe", quadrant: 0, ring: 2, moved: 0 },
+{ label: "Typescript", quadrant: 0, ring: 2, moved: 0 },
+{ label: "Elixir", quadrant: 0, ring: 1, moved: 0 },
+{ label: "Rust", quadrant: 0, ring: 1, moved: 0 },
+{ label: "Kotlin Exposed", quadrant: 0, ring: 1, moved: 0 },
+{ label: "Simple Flat Mapper", quadrant: 0, ring: 1, moved: 0 },
+{ label: "Gardener (k8s multicloud)", quadrant: 0, ring: 1, moved: 0 },
+{ label: "Erlang", quadrant: 0, ring: 1, moved: 0 },
+{ label: "Kotlin on server", quadrant: 0, ring: 0, moved: 0 },
+{ label: "Clojure", quadrant: 0, ring: 0, moved: 0 },
+{ label: "Rust", quadrant: 0, ring: 0, moved: 0 },
+{ label: "Kotlin", quadrant: 0, ring: 0, moved: 0 },
+{ label: "Typescript", quadrant: 0, ring: 0, moved: 0 },
+{ label: "Nodejs", quadrant: 0, ring: 0, moved: 0 },
+{ label: "Python", quadrant: 0, ring: 0, moved: 0 },
+{ label: "Ocaml", quadrant: 0, ring: 0, moved: 0 },
+{ label: "Scala", quadrant: 0, ring: 0, moved: 0 },
+{ label: "Camu", quadrant: 0, ring: 0, moved: 0 },
+{ label: "TomTom Maps SDK", quadrant: 0, ring: 0, moved: 0 },
+{ label: "WalletConnect", quadrant: 3, ring: 2, moved: 0 },
+{ label: "Telepresence", quadrant: 3, ring: 2, moved: 0 },
+{ label: "k9s", quadrant: 3, ring: 2, moved: 0 },
+{ label: "Stern", quadrant: 3, ring: 2, moved: 0 },
+{ label: "Goto", quadrant: 3, ring: 0, moved: 0 },
+{ label: "VS Code", quadrant: 3, ring: 0, moved: 0 },
+{ label: "Vim", quadrant: 3, ring: 0, moved: 0 },
+{ label: "AI/ML", quadrant: 3, ring: 0, moved: 0 },
+{ label: "CI/CD", quadrant: 3, ring: 0, moved: 0 },
+{ label: "TDD", quadrant: 2, ring: 1, moved: 0 },
+{ label: "Event sourcing", quadrant: 2, ring: 1, moved: 0 },
+{ label: "DSL for testing", quadrant: 2, ring: 1, moved: 0 },
+{ label: "DDD", quadrant: 2, ring: 1, moved: 0 },
+{ label: "Sleep", quadrant: 2, ring: 0, moved: 0 },
+{ label: "Trunk based development", quadrant: 2, ring: 0, moved: 0 },
+{ label: "Mob programming", quadrant: 2, ring: 0, moved: 0 },
+{ label: "Functional programming", quadrant: 2, ring: 0, moved: 0 },
+{ label: "Simple design", quadrant: 2, ring: 0, moved: 0 },
+{ label: "Kubernetes", quadrant: 1, ring: 0, moved: 0 },
+{ label: "Docker", quadrant: 1, ring: 0, moved: 0 },
+{ label: "AWS", quadrant: 1, ring: 0, moved: 0 },
+{ label: "GCP", quadrant: 1, ring: 0, moved: 0 },
+{ label: "Kubernetes", quadrant: 1, ring: 1, moved: 0 },
+{ label: "Blockchain", quadrant: 1, ring: 1, moved: 0 },
+{ label: "Mobile", quadrant: 1, ring: 1, moved: 0 }
+  ]
+});
 </script>
-<div id="legend-wrapper">
-<div class="legend-button" onClick="showLegend()"> + LEGEND </div>
-
-<div id="legend" class="hide-legend">
-<div id="hide-button" onClick="hideLegend()">x</div>
-
-<p class='legend-text'>
-
-<span class='key-heading'>Technology States in the Radars</span><br /><br />
-The radar serves as a one-stop-shop for making appsec security decisions about technologies to use in your applications.
-<br /><br />
-<span class='key-red'>Hold</span><br />
-Stable AppSec Technology that is currently not planned to be phased out, and recommended for continued use.
-<br /><br />
-<span class='key-orange'>Adopt</span><br />
-AppSec Technology that is new but should be adopted to account for a changing threat landscape.
-<br /><br />
-<span class='key-cadmium-yellow'>Trial</span><br />
-AppSec technology that should be trialled and AppSec teams are recommended to provide feedback on the new technology.
-<br /><br />
-<span class='key-lemon-yellow'>Assess</span><br />
-Technology that is too early for production use, however AppSec teams are encouraged to PoC.
-<br /><br />
-</p>
-
-</div>
-</div>
-<script>
-	var i;
-	var len = techList.length;
-	var svg = document.getElementById('svgRadar');
-	var dot;
-for(i = 0; i < len; i++){
-	dot = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
-
-	if(techList[i].Hold == "y")			{createDots("lime green", "#008f00", 10, 44);}
-	if(techList[i].Adopt == "y")			{createDots("yellow green", "#0fff00", 56, 94);}
-	if(techList[i].Trial == "y")			{createDots("lemon yellow", "#ffff00", 106, 144);}
-	if(techList[i].Assess == "y")		{createDots("cadmium yellow", "#ffc000", 156, 194);}
-	}
-function createDots(color, fill, minR, maxR){
-		var targetDot;
- 		var minA;
-		var maxA;
-		var minR;
-		var maxR;
-		var ar;
-		var angle;
-		var x;
-		var y;
-		dot.setAttribute("cy","300");
-		dot.setAttribute("cx","300");
-		dot.setAttribute("r","6");
-		svg.appendChild(dot);
-		techList[i].COLORCODE = color;
-		dot.style.fill = fill;
-		dot.style.stroke = "#000";
-	if(techList[i].CAT == "app")		{ar = RandomAngle(5.2, 0.8);}
-	if(techList[i].CAT == "platform")	{ar = RandomAngle(1, 2.7);}
-	if(techList[i].CAT == "service")	{ar = RandomAngle(2.9, 5);}
-		angle = ar;
-		x = Math.cos(angle)*(Math.floor(Math.random() * (maxR - minR)) + minR);
-		y =  Math.sin(angle)*(Math.floor(Math.random() * (maxR - minR)) + minR);
-		dot.setAttribute('transform','translate(' + x + ',' + y + ')');
-		dot.setAttribute('id', ("<p class='details-text'>Tech: &nbsp;<span class='col'>"
-					+ techList[i].TECH
-					+ "</span><br />Date Added: &nbsp;<span class='col'>"
-					+ techList[i].DATE
-					+ "</span><br />Colour Code: &nbsp;<span class='col'>"
-					+ techList[i].COLORCODE
-					+ "</span><br />Status: &nbsp;<span class='col'>"
-					+ techList[i].DETAILS
-					+ "</p>"));
-		dot.setAttribute("onmouseover", "showText(this)");
-		}
-function RandomAngle(minA, maxA){
-				ar = Math.random(maxA - minA) + minA;
-				return ar;
-				}
-function showText(obj){
-	targetDot = obj.id;
-	document.getElementById("detailsPos").innerHTML = targetDot;
-	}
-
-</script>
-
-
-<script>
-function showLegend() {
-	document.getElementById("legend").className = "show-legend";
-	}
-function hideLegend() {
-	document.getElementById("legend").className = "hide-legend";
-	}
-</script>
-
-
-
 </body>
 </html>
